@@ -1,0 +1,24 @@
+{
+    "name": "flaviovs/yii2-imagefilter",
+    "description": "Automatic image filtering for Yii2",
+    "license": "MIT",
+    "type": "yii2-extension",
+    "authors": [
+        {
+            "name": "Flávio Veloso",
+            "email": "flaviovs@magnux.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "fv\\yii\\imagefilter\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "^2.0.0"
+    },
+    "suggest": {
+        "flaviovs/yii2-imagefilters": "Image filters for Yii2 Imagefilter"
+    }
+}
