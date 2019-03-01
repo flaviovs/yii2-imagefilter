@@ -46,7 +46,7 @@ class Component extends \yii\base\Component {
      */
     public function url($pipeline, $src)
     {
-        $src = ltrim($src, '/');
+        $src = ltrim(is_array($src) ? $src[0] : $src, '/');
         $version = $this->getPipelineVersion($pipeline);
         return \Yii::getAlias('@web')
             . "/$this->path/$pipeline/$version/$src?"
