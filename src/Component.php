@@ -5,6 +5,8 @@
 
 namespace fv\yii\imagefilter;
 
+use yii\helpers\Url;
+
 class Component extends \yii\base\Component {
 
     public $useXSendFile = FALSE;
@@ -44,12 +46,12 @@ class Component extends \yii\base\Component {
     /**
      * Return a URL to render a filtered version of an image.
      */
-    public function url($pipeline, $src)
+    public function url($pipeline, $src, $scheme = false)
     {
         $src = ltrim(is_array($src) ? $src[0] : $src, '/');
         $version = $this->getPipelineVersion($pipeline);
-        return \Yii::getAlias('@web')
-            . "/$this->path/$pipeline/$version/$src?"
+        return Url::to("@web/$this->path/$pipeline/$version/$src", $scheme)
+            . '?'
             . $this->getToken($src);
     }
 
