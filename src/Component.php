@@ -55,7 +55,7 @@ class Component extends \yii\base\Component {
 
 
     /**
-     * Return a HTML IMG tag.
+     * Return an HTML IMG tag.
      */
     public function img($pipeline, $src, array $options = [])
     {
