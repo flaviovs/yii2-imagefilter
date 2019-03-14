@@ -27,7 +27,7 @@ class Component extends \yii\base\Component {
     /**
      * Get a file token, based on pipe configuration and source path.
      */
-    public function getToken($src)
+    protected function getToken($src)
     {
         $full_path = \Yii::getAlias('@webroot') . "/$src";
 
