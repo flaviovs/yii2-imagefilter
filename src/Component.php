@@ -30,8 +30,18 @@ class Component extends \yii\base\Component {
     public function getToken($src)
     {
         $full_path = \Yii::getAlias('@webroot') . "/$src";
-        $mtime = @filemtime($full_path);
-        return $mtime === false ? '' : hash('crc32b', "$full_path $mtime");
+
+        try {
+            $token =  hash('crc32b', '$full_path ' . filemtime($full_path));
+        } catch (\Exception $ex) {
+            \Yii::error($ex);
+            return null;
+        } catch (\Throwable $ex) {
+            \Yii::error($ex);
+            return null;
+        }
+
+        return $token;
     }
 
 
@@ -40,7 +50,17 @@ class Component extends \yii\base\Component {
      */
     public function isValidToken($src, $token)
     {
-        return hash_equals($this->getToken($src), $token);
+        $img_token = $this->getToken($src);
+        if ($img_token === null) {
+            return false;
+        }
+
+        if (!hash_equals($img_token, $token)) {
+            \Yii::warning("Invalid token", __METHOD__);
+            return false;
+        }
+
+        return true;
     }
 
 

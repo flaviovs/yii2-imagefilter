@@ -20,14 +20,9 @@ class Action extends \yii\base\Action
 
         $src_file = \Yii::getAlias('@webroot') . "/$src";
 
-        // There is no point to continue if the file does not exist.
-        if (!file_exists($src_file)) {
-            throw new \yii\web\NotFoundHttpException();
-        }
-
-        // Also, do not continue if the supplied token is invalid.
+        // Do not continue if the supplied token is invalid. Notice that this
+        // will fail if the file does not exist.
         if (!$imagefilter->isValidToken($src, $app->request->queryString)) {
-            \Yii::warning("Invalid token", __METHOD__);
             throw new \yii\web\NotFoundHttpException();
         }
 
