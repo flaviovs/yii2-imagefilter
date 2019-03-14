@@ -45,7 +45,7 @@ class Action extends \yii\base\Action
 
         $i = 0;
 
-        // Loop over each filter in the pipe.
+        // Loop over each filter in the pipeline.
         foreach ($imagefilter->pipelines[$pipeline]['filters'] as $cfg) {
             $obj = \Yii::createObject($cfg);
 
