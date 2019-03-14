@@ -30,7 +30,8 @@ class Component extends \yii\base\Component {
     public function getToken($src)
     {
         $full_path = \Yii::getAlias('@webroot') . "/$src";
-        return hash('crc32b', "$full_path " . fileinode($full_path));
+        $mtime = @filemtime($full_path);
+        return $mtime === false ? '' : hash('crc32b', "$full_path $mtime");
     }
 
 
