@@ -51,15 +51,11 @@ class Action extends \yii\base\Action
 
             $dest_file = "$dest_path/~$i-$base";
 
-            if (YII_DEBUG) {
-                \Yii::trace("Applying " . get_class($obj) . " to $src_file",
-                            __METHOD__);
-            }
-
             if (is_file($dest_file)) {
                 FileHelper::unlink($dest_file);
             }
-            $obj->filterImage($src_file, $dest_file);
+
+            $this->applyFilter($obj, $src_file, $dest_file);
 
             if ($i && is_file($src_file)) {
                 FileHelper::unlink($src_file);
@@ -92,4 +88,16 @@ class Action extends \yii\base\Action
             );
         }
     }
+
+
+    protected function applyFilter($obj, $src_file, $dest_file)
+    {
+        if (YII_DEBUG) {
+            \Yii::trace("Applying " . get_class($obj) . " to $src_file",
+                        __METHOD__);
+        }
+
+        $obj->filterImage($src_file, $dest_file);
+    }
+
 }
