@@ -34,10 +34,10 @@ class Component extends \yii\base\Component {
         try {
             $token =  hash('crc32b', '$full_path ' . filemtime($full_path));
         } catch (\Exception $ex) {
-            \Yii::error($ex);
+            \Yii::error($ex, __METHOD__);
             return null;
         } catch (\Throwable $ex) {
-            \Yii::error($ex);
+            \Yii::error($ex, __METHOD__);
             return null;
         }
 
