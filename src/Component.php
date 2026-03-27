@@ -12,6 +12,7 @@ class Component extends \yii\base\Component
 
     public $useXSendFile = FALSE;
     public $path = 'assets/img';
+    public $tokenSecret = null;
 
     public $pipelines = [];
 
@@ -48,11 +49,38 @@ class Component extends \yii\base\Component
     }
 
 
-    /**
-     * Check if a token is valid for a given (pipe,url) tuple.
-     */
+    protected function getHMACToken($src)
+    {
+        if ($this->tokenSecret === null) {
+            return null;
+        }
+
+        $path = $this->path . '/' . $src;
+        $hash = hash_hmac('sha1', $path, $this->tokenSecret);
+        return 't:' . substr($hash, 0, 8);
+    }
+
+
     public function isValidToken($src, $token)
     {
+        if (strpos($token, 't:') === 0) {
+            if ($this->tokenSecret === null) {
+                \Yii::warning("Token secret not configured", __METHOD__);
+                return false;
+            }
+
+            $hash = substr($token, 2);
+            $path = $this->path . '/' . $src;
+            $expected = substr(hash_hmac('sha1', $path, $this->tokenSecret), 0, 8);
+
+            if (!hash_equals($expected, $hash)) {
+                \Yii::warning("Invalid token", __METHOD__);
+                return false;
+            }
+
+            return true;
+        }
+
         $img_token = $this->getToken($src);
         if ($img_token === null) {
             return false;
