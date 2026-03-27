@@ -26,14 +26,16 @@ class Component extends \yii\base\Component
 
 
     /**
-     * Get a file token, based on pipe configuration and source path.
+     * Get a file token, based on source path.
+     *
+     * @param string $src Original path in web root, e.g. "/img/foobar/file.png"
      */
     protected function getToken($src)
     {
         $full_path = \Yii::getAlias('@webroot') . "/$src";
 
         try {
-            $token =  hash('crc32b', '$full_path ' . filemtime($full_path));
+            $token =  hash('crc32b', $src . " " . filemtime($full_path));
         } catch (\Exception $ex) {
             \Yii::error($ex, __METHOD__);
             return null;
