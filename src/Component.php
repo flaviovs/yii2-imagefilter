@@ -60,20 +60,22 @@ class Component extends \yii\base\Component
 
 
     /**
-     * Get a file token based on source path and modification time.
+     * Get a file token based on source path, pipeline, version and modification time.
      *
-     * Uses CRC32B hash of the path concatenated with the file's modification
-     * time. This provides basic protection against URL guessing.
+     * Uses CRC32B hash of the path, pipeline, version concatenated with the file's
+     * modification time. This provides basic protection against URL guessing.
      *
      * @param string $src Source image path relative to webroot, e.g. "img/foobar.png"
+     * @param string $pipeline Pipeline name
+     * @param string $version Pipeline version
      * @return string|null CRC32B hash string, or null on error
      */
-    protected function getToken($src)
+    protected function getToken($src, $pipeline, $version)
     {
         $full_path = \Yii::getAlias('@webroot') . "/$src";
 
         try {
-            $token =  hash('crc32b', $src . " " . filemtime($full_path));
+            $token = hash('crc32b', $src . '/' . $pipeline . '/' . $version . '/' . filemtime($full_path));
         } catch (\Exception $ex) {
             \Yii::error($ex, __METHOD__);
             return null;
@@ -150,7 +152,7 @@ class Component extends \yii\base\Component
             return true;
         }
 
-        $img_token = $this->getToken($src);
+        $img_token = $this->getToken($src, $pipeline, $version);
         if ($img_token === null) {
             return false;
         }
@@ -178,7 +180,7 @@ class Component extends \yii\base\Component
         $version = $this->getPipelineVersion($pipeline);
         return Url::to("@web/$this->path/$pipeline/$version/$src", $scheme)
             . '?'
-            . $this->getToken($src);
+            . $this->getToken($src, $pipeline, $version);
     }
 
 
