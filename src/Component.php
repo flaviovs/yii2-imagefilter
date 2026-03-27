@@ -170,7 +170,7 @@ class Component extends \yii\base\Component
      * Generate a URL to render a filtered version of an image.
      *
      * @param string $pipeline Pipeline name
-     * @param string $src Source image path relative to webroot
+     * @param string|array $src Source image path relative to webroot (accepts array like Url::to())
      * @param bool|string $scheme URL scheme (false for relative)
      * @return string Generated URL with token query parameter
      */
@@ -188,7 +188,7 @@ class Component extends \yii\base\Component
      * Generate an HTML IMG tag for a filtered image.
      *
      * @param string $pipeline Pipeline name
-     * @param string $src Source image path relative to webroot
+     * @param string|array $src Source image path relative to webroot (accepts array like Url::to())
      * @param array $options HTML options for the img tag
      * @return string Generated HTML img tag
      */
