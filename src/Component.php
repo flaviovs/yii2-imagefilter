@@ -7,7 +7,8 @@ namespace fv\yii\imagefilter;
 
 use yii\helpers\Url;
 
-class Component extends \yii\base\Component {
+class Component extends \yii\base\Component
+{
 
     public $useXSendFile = FALSE;
     public $path = 'assets/img';

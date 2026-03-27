@@ -4,6 +4,7 @@
  */
 namespace fv\yii\imagefilter;
 
-interface Filter {
+interface Filter
+{
     public function filterImage($src, $dest);
 }
