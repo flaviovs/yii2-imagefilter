@@ -62,8 +62,9 @@ class Component extends \yii\base\Component
     /**
      * Get a file token based on source path, pipeline, version and modification time.
      *
-     * Uses CRC32B hash of the path, pipeline, version concatenated with the file's
-     * modification time. This provides basic protection against URL guessing.
+     * Uses CRC32B hash of the path, pipeline, version and file modification time,
+     * separated by null bytes to prevent injection attacks. This provides basic
+     * protection against URL guessing.
      *
      * @param string $src Source image path relative to webroot, e.g. "img/foobar.png"
      * @param string $pipeline Pipeline name
@@ -75,7 +76,7 @@ class Component extends \yii\base\Component
         $full_path = \Yii::getAlias('@webroot') . "/$src";
 
         try {
-            $token = hash('crc32b', $src . '/' . $pipeline . '/' . $version . '/' . filemtime($full_path));
+            $token = hash('crc32b', $src . "\0" . $pipeline . "\0" . $version . "\0" . filemtime($full_path));
         } catch (\Exception $ex) {
             \Yii::error($ex, __METHOD__);
             return null;
@@ -95,10 +96,8 @@ class Component extends \yii\base\Component
      * The token format is "t:{8chars}" where 8 chars are the first hex
      * digits of the HMAC hash.
      *
-     * The HMAC is computed over "$path/$pipeline/$version/$src" where
-     * $path is the configured cache path (e.g., "assets/img"), $pipeline
-     * is the pipeline name, $version is the pipeline version, and $src
-     * is the source image path.
+     * The HMAC is computed over the path components separated by null bytes
+     * to prevent injection attacks: "$path\0$pipeline\0$version\0$src".
      *
      * @param string $src Source image path relative to webroot, e.g. "img/foobar.png"
      * @param string $pipeline Pipeline name
@@ -124,7 +123,8 @@ class Component extends \yii\base\Component
      * - Plain CRC32 hash: validated against file modification time
      * - HMAC token (t: prefix): validated using the configured secret
      *
-     * For HMAC validation, the hash is computed over "$path/$pipeline/$version/$src".
+     * For both token types, path components are separated by null bytes
+     * to prevent injection attacks.
      *
      * @param string $src Source image path relative to webroot, e.g. "img/foobar.png"
      * @param string $token Token to validate (CRC hash or "t:{8chars}")
@@ -141,7 +141,7 @@ class Component extends \yii\base\Component
             }
 
             $hash = substr($token, 2);
-            $path = $this->path . '/' . $pipeline . '/' . $version . '/' . $src;
+            $path = $this->path . "\0" . $pipeline . "\0" . $version . "\0" . $src;
             $expected = substr(hash_hmac('sha1', $path, $this->tokenSecret), 0, 8);
 
             if (!hash_equals($expected, $hash)) {
